@@ -1,0 +1,77 @@
+title 
+Binary Comparator
+
+description
+It compares two binary strings to see if they are equal
+
+vertices
+1 R 0 0.25
+2 R 0 0.5
+3 R 0 0.75
+4 R 0.25 0.25 
+5 R 0.25 0.5
+6 R 0.25 0.75
+7 L 0.5 0.25
+8 L 0.5 0.5
+9 L 0.5 0.75 
+10 L 0.75 0.25
+11 L 0.75 0.5
+12 L 0.75 0.75
+13 R 1 0.25
+14 R 1 0.5
+15 N 1 0.75
+16 Y 1 1
+
+
+edges
+//To compare in right direction
+1 3 1 /
+1 2 0 /
+1 16 # #
+
+//If a 1 is detected
+3 5 / /
+5 6 1 /
+5 15 0 0
+5 15 # #
+
+//If a 0 is detected
+2 4 / / 
+4 15 1 1
+4 6 0 /
+4 15 # #
+
+//From this, we check the next character (we are in the right)
+6 7 # #
+6 8 0 /
+6 9 1 /
+
+//If the second string has finished
+7 10 / /
+10 15 1 1
+10 15 0 0
+10 16 # #
+
+//If the second string has the next character '1'
+9 13 # #
+13 1 1 /
+13 15 0 0
+13 15 # #
+//13 15 / /
+
+//If the second string has the next character '0' 
+8 14 # #
+14 1 0 /
+14 15 1 1
+14 15 # #
+//14 15 / /
+
+tapes
+//Acepted
+[1] 1 1 / 1 1 1
+[0] 1 0 / 0 1 0
+[0] 0 0 1 / 0 0 1
+//Rejected
+[1] 1 1 0 / 1 1 1 1
+[0] 0 0 0 0 0 0 0 0 0 / 0 0 0
+[1] 1 0 1 0 1 0 1 / 1 1 0 1 0 1 0 1

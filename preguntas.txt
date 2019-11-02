@@ -1,0 +1,16 @@
+- It is always P the easy way and not in P hard?
+    It is reasonable to say that, and there's even a famous scientist called Cobham 
+    that claimed in his thesis that asumption. But, being generally true, at least in
+    theory, it doesn't make it certain in practice, where you can find huge constant
+    factors that complicates a lot the compute of the problem.
+
+- What would be better? To prove NP = P or NP != P?
+    Without any doubts, the first one. If we can demonstrate that P = NP, we could
+    improve a lot of methods for solving problems in NP, that could lead us to an
+    incredible ammount of new discoverys. Actually, the prize given by Clay institute,
+    is related to this.
+
+- Is there any solution to the problem P vs NP?
+    Despite the problem is usually considered unsolved, there are some claimed solutions.
+    There are more than one hundred attempts to solve it but none of them are consitents
+    enough to fully asure that te problem is completely solved.
