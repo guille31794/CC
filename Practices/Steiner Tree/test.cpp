@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
         for(int j = 0; j < 5; ++j)
         {
             v[i][j] = j;
-            cout << v[i][j] << " " << endl;
+            cout << v[i,j] << " " << endl;
         }
     return 0;
 }

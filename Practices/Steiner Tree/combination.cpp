@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <limits>
 
 using namespace std;
 
@@ -31,7 +32,8 @@ vector<pair<unsigned, unsigned>> Prim(vector<vector<unsigned>>&, int compulsory)
 unsigned select(vector<unsigned>&, vector<unsigned>&); 
 
 // Sub-algorithm needed for Prim's
-void update();
+pair<vector<unsigned>, vector<unsigned>> update(vector<unsigned>&, vector<unsigned>&,
+vector<unsigned>&, unsigned, vector<vector<unsigned>>&);
 
 int main(int argc, char const *argv[])
 {
@@ -40,6 +42,9 @@ int main(int argc, char const *argv[])
     vector<vector<unsigned>> v{nextKComb(cm, 5)};
 
     showComb(v);
+
+    vector<pair<unsigned, unsigned>> S
+    {Prim(cm, 5)};
 
     return 0;
 }
@@ -86,14 +91,20 @@ void showComb(const vector<vector<unsigned>>& v)
     cout << endl;
 }
 
-vector<pair<unsigned, unsigned>> Prim(vector<vector<unsigned>>& p, int n)
+vector<pair<unsigned, unsigned>> 
+Prim(vector<vector<unsigned>>& p, int n)
 {
+    //Set of predecessor and it's distances
     vector<pair<unsigned, unsigned>> S;
+    //Set of vertex
     vector<unsigned> C(n-1);
+    //Node predecessor
     vector<unsigned> c(n);
+    //Distances from actual node to the neighbors
     vector<unsigned> d(n);
 
     c[0] = 0;
+    d[0] = 0;
 
     for(int j = 1; j < n; ++j)
     {
@@ -113,3 +124,42 @@ vector<pair<unsigned, unsigned>> Prim(vector<vector<unsigned>>& p, int n)
     return S;
 }
 
+unsigned select(vector<unsigned>& C, vector<unsigned>& d)
+{
+    unsigned k{},
+    v{numeric_limits<unsigned>::max()};
+
+    /*for(auto it : C)
+        if(d[it] < v)
+        {
+            v = d[it];
+            k = it;
+        }*/
+
+    for_each(C.begin(), C.end(), 
+    [d, &v, &k](unsigned n)
+    {
+        if(d[n] < v)
+        {
+            v = d[n]; 
+            k = n;
+        }
+    });
+
+    return k;
+}
+
+pair<vector<unsigned>, vector<unsigned>> update(vector<unsigned>& c, 
+vector<unsigned>& d, vector<unsigned>& C, unsigned k, 
+vector<vector<unsigned>>& p)
+{
+    for_each(C.begin(), C.end(),
+    [&c, &d, k, &p](unsigned j)
+    {
+        if(p[j][k] < d[j])
+        {
+            c[j] = k;
+            d[j] = p[k][j];
+        }
+    });
+}
