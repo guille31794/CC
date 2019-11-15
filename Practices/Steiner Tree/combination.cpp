@@ -2,6 +2,9 @@
     Practice 2
     Software developed by:
     Guillermo Girón García
+    Compiled under:
+    g++ (Ubuntu 9.2.1-9ubuntu2) 9.2.1 20191008
+    using -std=c++17 -O2 flags
 */
 
 #include <iostream>
@@ -12,9 +15,9 @@
 
 using namespace std;
 
-unsigned dim{5};
+unsigned dim{25};
 //Costs matrix declaration
-vector<vector<unsigned>> cm(dim, vector<unsigned>(5));
+vector<vector<unsigned>> cm(dim, vector<unsigned>(dim));
 
 //Random costs matrix generator
 void cmGenerator(vector<vector<unsigned>>&);
@@ -26,25 +29,46 @@ vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>&, int);
 void showComb(const vector<vector<unsigned>>&);
 
 // Implementation of Prim's algorithm
-vector<pair<unsigned, unsigned>> Prim(vector<vector<unsigned>>&, int compulsory);
+vector<pair<unsigned, unsigned>> Prim(vector<vector<unsigned>>&, 
+unsigned);
 
 // Sub-algorithm needed for Prim's
 unsigned select(vector<unsigned>&, vector<unsigned>&); 
 
 // Sub-algorithm needed for Prim's
-pair<vector<unsigned>, vector<unsigned>> update(vector<unsigned>&, vector<unsigned>&,
+void update(vector<unsigned>&, vector<unsigned>&,
 vector<unsigned>&, unsigned, vector<vector<unsigned>>&);
+
+// Compute the distance needed for a determined combination of nodes
+unsigned distance(vector<pair<unsigned, unsigned>>&);
+
+// Creates submatrix joining costs from cm & combinations of nodes
+vector<vector<unsigned>> subMComb
+(vector<vector<unsigned>>&, vector<unsigned>&);
+
+// Auxiliar functions for printing and debugging
+void showPairs(vector<pair<unsigned, unsigned>>&);
+void printCM(vector<vector<unsigned>>&);
 
 int main(int argc, char const *argv[])
 {
     cmGenerator(cm);
-    
-    vector<vector<unsigned>> v{nextKComb(cm, 5)};
+    printCM(cm);
 
-    showComb(v);
+    vector<vector<unsigned>> v{nextKComb(cm, 0)};
+
+    //showComb(v);
+    // TODO: crear submatrices de cm con las combinaciones
+    // de los pesos de los que quiero calcular las distancias.
 
     vector<pair<unsigned, unsigned>> S
     {Prim(cm, 5)};
+
+    //Minimum distance for cover all graph nodes
+    unsigned d{distance(S)};
+    cout << "Distance is: " << d << endl;
+
+    showPairs(S);
 
     return 0;
 }
@@ -67,7 +91,10 @@ vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>& v, int k)
         comb[0][i] = i;
 
     int i = 1;
-    
+
+    if(k == 0)
+        k = pow(2, v.size());
+
     while (next_permutation(comb[0].begin(), comb[0].end()) && i != k)
     {
         comb.push_back(comb[0]);
@@ -115,6 +142,7 @@ Prim(vector<vector<unsigned>>& p, int n)
 
     while(!C.empty())
     {
+        // Minimum distance node
         unsigned k = select(C,d);
         C.erase(find(C.begin(), C.end(), k));
         S.push_back(make_pair(c[k], k));
@@ -129,13 +157,6 @@ unsigned select(vector<unsigned>& C, vector<unsigned>& d)
     unsigned k{},
     v{numeric_limits<unsigned>::max()};
 
-    /*for(auto it : C)
-        if(d[it] < v)
-        {
-            v = d[it];
-            k = it;
-        }*/
-
     for_each(C.begin(), C.end(), 
     [d, &v, &k](unsigned n)
     {
@@ -149,7 +170,7 @@ unsigned select(vector<unsigned>& C, vector<unsigned>& d)
     return k;
 }
 
-pair<vector<unsigned>, vector<unsigned>> update(vector<unsigned>& c, 
+void update(vector<unsigned>& c, 
 vector<unsigned>& d, vector<unsigned>& C, unsigned k, 
 vector<vector<unsigned>>& p)
 {
@@ -162,4 +183,43 @@ vector<vector<unsigned>>& p)
             d[j] = p[k][j];
         }
     });
+}
+
+void showPairs(vector<pair<unsigned, unsigned>>& S)
+{
+    for (auto &&i : S)
+        cout << i.first << " " << i.second << '\n';
+    
+    cout << endl;
+}
+
+void printCM(vector<vector<unsigned>>& cm)
+{
+    for (auto &&i : cm)
+    {   
+        cout << "| ";
+        for (auto &&it : i)
+            cout << it << " ";
+        
+        cout << "|\n";
+    }
+
+    cout << endl;
+}
+
+unsigned distance(vector<pair<unsigned, unsigned>>& S)
+{
+    unsigned d{0};
+    for (auto &&i : S)
+        d += i.second;
+    
+    return d;
+}
+
+vector<vector<unsigned>> subMComb
+(vector<vector<unsigned>>& cm, vector<unsigned>& comb)
+{
+    vector<vector<unsigned>> subM(comb.size(){comb.size()});
+
+    return subM;
 }
