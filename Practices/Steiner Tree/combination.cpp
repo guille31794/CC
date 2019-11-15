@@ -46,6 +46,9 @@ unsigned distance(vector<pair<unsigned, unsigned>>&);
 vector<vector<unsigned>> subMComb
 (vector<vector<unsigned>>&, vector<unsigned>&);
 
+// Creates combinations, and compute it distances
+void generateTree();
+
 // Auxiliar functions for printing and debugging
 void showPairs(vector<pair<unsigned, unsigned>>&);
 void printCM(vector<vector<unsigned>>&);
@@ -55,20 +58,7 @@ int main(int argc, char const *argv[])
     cmGenerator(cm);
     printCM(cm);
 
-    vector<vector<unsigned>> v{nextKComb(cm, 0)};
-
-    //showComb(v);
-    // TODO: crear submatrices de cm con las combinaciones
-    // de los pesos de los que quiero calcular las distancias.
-
-    vector<pair<unsigned, unsigned>> S
-    {Prim(cm, 5)};
-
-    //Minimum distance for cover all graph nodes
-    unsigned d{distance(S)};
-    cout << "Distance is: " << d << endl;
-
-    showPairs(S);
+    generateTree();
 
     return 0;
 }
@@ -90,16 +80,13 @@ vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>& v, int k)
     for(int i = 0; i < v[0].size(); ++i)
         comb[0][i] = i;
 
-    int i = 1;
-
-    if(k == 0)
-        k = pow(2, v.size());
-
-    while (next_permutation(comb[0].begin(), comb[0].end()) && i != k)
+    do
     {
-        comb.push_back(comb[0]);
-        ++i;
-    }
+        while (next_permutation(comb[0].begin(), comb[0].end()))
+            comb.push_back(comb[0]);
+    
+        comb[0].pop_back();
+    } while (comb[0].size() > 5);
     
     return comb;    
 }
@@ -219,9 +206,37 @@ unsigned distance(vector<pair<unsigned, unsigned>>& S)
 vector<vector<unsigned>> subMComb
 (vector<vector<unsigned>>& cm, vector<unsigned>& comb)
 {
-    vector<vector<unsigned>> subM(comb.size(){comb.size()});
+    vector<vector<unsigned>> subM(comb.size(), {(unsigned)comb.size()});
 
-    
-
+    for (auto &&i : comb)
+        for(auto &&it : comb)
+            subM[i][it] = cm[i][it];
+        
     return subM;
+}
+
+void generate()
+{
+    // Nodes to check plus the compulsory ones (n)
+    unsigned compulsory{5}, n{20}, 
+    //Minimum distance for cover all graph nodes
+    d{numeric_limits<unsigned>::max()};
+
+    for(int i = 0; i < n; ++i)
+    {
+        for()
+        vector<vector<unsigned>> subM{subMComb(cm, n)};
+        vector<vector<unsigned>> comb{nextKComb(cm, 0)};
+
+        for(auto &&it : comb)
+        {
+            vector<vector<unsigned>> subM{subMComb(cm, it)};
+            //showComb(v);
+            vector<pair<unsigned, unsigned>> S{Prim(subM, 5)};
+            //showPairs(S);
+            d = min(distance(S), d);
+        }
+    }
+    
+    cout << "Minimun distance is: " << d << endl;
 }
