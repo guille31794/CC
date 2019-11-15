@@ -12,6 +12,7 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include <list>
 
 using namespace std;
 
@@ -224,7 +225,7 @@ void generate()
 
     for(int i = 0; i < n; ++i)
     {
-        for()
+        
         vector<vector<unsigned>> subM{subMComb(cm, n)};
         vector<vector<unsigned>> comb{nextKComb(cm, 0)};
 
