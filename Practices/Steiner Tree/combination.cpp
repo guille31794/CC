@@ -17,6 +17,39 @@
 using namespace std;
 
 unsigned dim{25};
+
+class Binario 
+{     
+    //Class to represent a binary number, to use for all node choice combinations.
+    public:
+        int NOnes;      //Amount of ones in the number.
+        
+        Binario(unsigned siz): NOnes(0), Bins(siz, 0){}
+        
+        void inc()      //Increment the binary number by one. Produces an error with overflows.
+        {
+            if(NOnes <= dim)
+            {
+                vector<unsigned>::iterator it = Bins.begin();
+                while(*it == 1 && it != Bins.end())
+                {
+                    *it = 0;
+                    it++;
+                    NOnes--;
+                }
+                *it = 1;
+                NOnes++;
+            }
+        }
+
+        unsigned size() const{return Bins.size();}   //Return size of number
+
+        int operator[](int indice){return Bins[indice];}
+    private:
+        vector<unsigned> Bins;   //Vector of ones and zeros.
+
+};
+
 //Costs matrix declaration
 vector<vector<unsigned>> cm(dim, vector<unsigned>(dim));
 
@@ -24,7 +57,7 @@ vector<vector<unsigned>> cm(dim, vector<unsigned>(dim));
 void cmGenerator(vector<vector<unsigned>>&);
 
 // Compute the next k-combinations
-vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>&, int);
+vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>&);
 
 // Show next k-combinations throw std::out
 void showComb(const vector<vector<unsigned>>&);
@@ -45,7 +78,7 @@ unsigned distance(vector<pair<unsigned, unsigned>>&);
 
 // Creates submatrix joining costs from cm & combinations of nodes
 vector<vector<unsigned>> subMComb
-(vector<vector<unsigned>>&, vector<unsigned>&);
+(vector<vector<unsigned>>&, Binario&);
 
 // Creates combinations, and compute it distances
 void generateTree();
@@ -57,7 +90,7 @@ void printCM(vector<vector<unsigned>>&);
 int main(int argc, char const *argv[])
 {
     cmGenerator(cm);
-    printCM(cm);
+    //printCM(cm);
 
     generateTree();
 
@@ -74,7 +107,7 @@ void cmGenerator(vector<vector<unsigned>>& v)
         v[i][i] = 0;
 }
 
-vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>& v, int k)
+vector<vector<unsigned>> nextKComb(vector<vector<unsigned>>& v)
 {
     vector<vector<unsigned>> comb(1, vector<unsigned>(v.size()));
     
@@ -107,7 +140,7 @@ void showComb(const vector<vector<unsigned>>& v)
 }
 
 vector<pair<unsigned, unsigned>> 
-Prim(vector<vector<unsigned>>& p, int n)
+Prim(vector<vector<unsigned>>& p, unsigned n)
 {
     //Set of predecessor and it's distances
     vector<pair<unsigned, unsigned>> S;
@@ -205,38 +238,64 @@ unsigned distance(vector<pair<unsigned, unsigned>>& S)
 }
 
 vector<vector<unsigned>> subMComb
-(vector<vector<unsigned>>& cm, vector<unsigned>& comb)
+(vector<vector<unsigned>>& cm, Binario& comb)
 {
-    vector<vector<unsigned>> subM(comb.size(), {(unsigned)comb.size()});
+    unsigned size{(unsigned)(5+comb.NOnes)};
+    vector<vector<unsigned>> subM(size, {size});
+    vector<unsigned> position;
 
-    for (auto &&i : comb)
-        for(auto &&it : comb)
-            subM[i][it] = cm[i][it];
+    for(int i = 0; i < comb.size(); ++i)
+        if(comb[i])
+            position.push_back(i);
+
+    vector<unsigned>::iterator it = position.begin();
+
+    for (int i = 0; i < 5; ++i)
+        for(int j = 0; j < 5; ++j)
+            subM[i][j] = cm[i][j];
+
+    for(int i = 0; i < size; ++i)
+    {
+        it = position.begin();
+
+        for(int j = 5; j < size; ++j)
+        {
+            subM[i][j] = cm[i][*it];
+            ++it;
+        }
+    }
+
+    for(int i = 5; i < size; ++i)
+    {
+        it = position.begin();
+        
+        for(int j = 0; j < size; ++j)
+        {
+            subM[i][j] = cm[i][*it];
+            ++it;
+        }
+    }
         
     return subM;
 }
 
-void generate()
+void generateTree()
 {
     // Nodes to check plus the compulsory ones (n)
-    unsigned compulsory{5}, n{20}, 
+    unsigned n{20}, 
     //Minimum distance for cover all graph nodes
     d{numeric_limits<unsigned>::max()};
+    //Used to generate combinations
+    Binario comb{n};
 
-    for(int i = 0; i < n; ++i)
+    while(comb.NOnes < 25)
     {
-        
-        vector<vector<unsigned>> subM{subMComb(cm, n)};
-        vector<vector<unsigned>> comb{nextKComb(cm, 0)};
-
-        for(auto &&it : comb)
-        {
-            vector<vector<unsigned>> subM{subMComb(cm, it)};
-            //showComb(v);
-            vector<pair<unsigned, unsigned>> S{Prim(subM, 5)};
-            //showPairs(S);
-            d = min(distance(S), d);
-        }
+        vector<vector<unsigned>> subM{subMComb(cm, comb)};
+        //showComb(comb);
+        vector<pair<unsigned, unsigned>> S{Prim(subM, dim)};
+        //showPairs(S);
+        d = min(distance(S), d);
+        comb.inc();
     }
     
     cout << "Minimun distance is: " << d << endl;
