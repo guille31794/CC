@@ -4,26 +4,15 @@
     for practice 3
 */
 
-#include <iostream>
-#include <fstream>
-#include <list>
-#include <vector>
-#include <cstring>
-#include <algorithm>
-
-using namespace std;
-
-// List that store all graphs conections
-vector<list<unsigned>> adjL(10, list<unsigned>(3));
-// Enum to represent colours
-enum colour {R, G, B};
-
-// Procedure that load list from file to memory
-void loadList();
+#include "adjList.hpp"
 
 int main(int argc, char const *argv[])
 {
     loadList();
+    createAdjMatrix();
+    //ThreeColRed(); 
+
+    cout << endl;
     return 0;
 }
 
@@ -36,15 +25,52 @@ void loadList()
     {
         string str;
         getline(list, str);
-        cout << atoi(str.c_str()) << endl;
+        
         for_each(str.begin(), str.end(), 
         [i](char c)
         {
-            adjL[i].push_back((unsigned)c);
+            if(!isspace(c))
+                adjL[i].push_back((unsigned)(c - '0'));
         });
-        //cout << adjL[i].front() << endl;
+        
         ++i;
     }while(!list.eof());
     
     list.close();
+}
+
+void createAdjMatrix()
+{
+    for(int i = 0; i < adjL.size(); ++i)
+        for(int j = 0; j < adjL.size(); ++j)
+            adjMatrix[i][j] = 0;
+
+    for(int i = 0; i < adjL.size(); ++i)
+        for(auto it : adjL[i])
+            adjMatrix[i][it] = 1;
+        
+}
+
+void ThreeColRed()
+{
+    ofstream dimacs{"reduction.cfg", ofstream::out};
+    string str{"c 3 colouring graph reduction"};
+    
+    dimacs.write(str.c_str(), str.length());
+
+    str = "p cnf 30 120";
+
+    dimacs.write(str.c_str(), str.size());
+
+    for(int i = 1; i != graphNodes; ++i)
+    {
+        
+    }
+
+    dimacs.close();
+}
+
+void generateClauses()
+{
+
 }
