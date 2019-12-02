@@ -15,7 +15,7 @@
 
 using namespace std;
 
-unsigned graphNodes{10};
+unsigned graphNodes{10}, colours{3};
 
 // List that store all graphs conections
 vector<list<unsigned>> adjL(graphNodes, list<unsigned>{});
@@ -36,6 +36,10 @@ void createAdjMatrix();
 void ThreeColRed();
 
 // Prodedure that generates clauses for any node
-void generateClauses();
+// Clauses going to be: node number + 1 * [1..3]
+// Example: node 0 -> 1 2 3, represents node 0
+// can be red, blue or green.
+// For node 1 -> 4 5 6 and so on.
+void generateClauses(int, ofstream&);
 
 #endif

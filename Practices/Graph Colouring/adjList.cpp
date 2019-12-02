@@ -10,9 +10,8 @@ int main(int argc, char const *argv[])
 {
     loadList();
     createAdjMatrix();
-    //ThreeColRed(); 
+    ThreeColRed(); 
 
-    cout << endl;
     return 0;
 }
 
@@ -53,24 +52,57 @@ void createAdjMatrix()
 
 void ThreeColRed()
 {
-    ofstream dimacs{"reduction.cfg", ofstream::out};
-    string str{"c 3 colouring graph reduction"};
+    ofstream dimacs{"reduction.cnf", ofstream::out};
+    string str{"c 3 colouring graph reduction\n"};
     
-    dimacs.write(str.c_str(), str.length());
+    dimacs << str; //.write(str.c_str(), str.length());
 
-    str = "p cnf 30 120";
+    str = "p cnf 30 85\n";
 
-    dimacs.write(str.c_str(), str.size());
+    dimacs << str;
 
-    for(int i = 1; i != graphNodes; ++i)
+    for(int i = 0; i != graphNodes; ++i)
     {
-        
+        generateClauses(i, dimacs);
     }
 
     dimacs.close();
 }
 
-void generateClauses()
+void generateClauses(int node, ofstream& dimacs)
 {
+    // Own clauses of a node
+    int clauseBegin{node*3};
+    string str{to_string(clauseBegin+1)};
+    for(int i = clauseBegin + 2; i <= clauseBegin+colours; 
+    ++i)
+        str.append(" " + to_string(i));
+    
+    str.append("\n");
+    dimacs << str;
 
+    for(int i = clauseBegin+1; i <= clauseBegin+colours; ++i)
+    {
+        for(int j = i+1; j <= clauseBegin+colours; ++j)
+        {
+            str = to_string(-i);
+            str.append(" " + to_string(-j) + "\n");
+            dimacs << str;
+        }
+    }
+
+    // Adjacency clauses
+    for(int i = node + 1; i < graphNodes; ++i)
+    {
+        if(adjMatrix[node][i])
+        {
+            int clauseBeginAdj{i*3};
+            for(int j = 1; j <= colours; ++j)
+            {
+                str = to_string(-(clauseBegin+j)) + " " + 
+                to_string(-(clauseBeginAdj+j)) + "\n";
+                dimacs << str;
+            }
+        }
+    }
 }
