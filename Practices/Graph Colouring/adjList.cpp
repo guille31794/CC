@@ -78,7 +78,7 @@ void generateClauses(int node, ofstream& dimacs)
     ++i)
         str.append(" " + to_string(i));
     
-    str.append("\n");
+    str.append(" 0\n");
     dimacs << str;
 
     for(int i = clauseBegin+1; i <= clauseBegin+colours; ++i)
@@ -86,7 +86,7 @@ void generateClauses(int node, ofstream& dimacs)
         for(int j = i+1; j <= clauseBegin+colours; ++j)
         {
             str = to_string(-i);
-            str.append(" " + to_string(-j) + "\n");
+            str.append(" " + to_string(-j) + " 0\n");
             dimacs << str;
         }
     }
@@ -100,7 +100,7 @@ void generateClauses(int node, ofstream& dimacs)
             for(int j = 1; j <= colours; ++j)
             {
                 str = to_string(-(clauseBegin+j)) + " " + 
-                to_string(-(clauseBeginAdj+j)) + "\n";
+                to_string(-(clauseBeginAdj+j)) + " 0\n";
                 dimacs << str;
             }
         }
