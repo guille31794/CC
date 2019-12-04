@@ -15,13 +15,10 @@
 
 using namespace std;
 
-unsigned graphNodes{10}, colours{3};
+unsigned graphNodes{10}, colours3{3}, colours2{2};
 
 // List that store all graphs conections
 vector<list<unsigned>> adjL(graphNodes, list<unsigned>{});
-
-// Enum to represent colours
-enum colour {R, G, B};
 
 // adjacency matrix
 bool adjMatrix[10][10];
@@ -34,12 +31,14 @@ void createAdjMatrix();
 
 // Procedure that computes the reduction
 void ThreeColRed();
+void TwoColRed();
 
 // Prodedure that generates clauses for any node
 // Clauses going to be: node number + 1 * [1..3]
 // Example: node 0 -> 1 2 3, represents node 0
 // can be red, blue or green.
 // For node 1 -> 4 5 6 and so on.
-void generateClauses(int, ofstream&);
+void generateClauses2(int, ofstream&);
+void generateClauses3(int, ofstream&);
 
 #endif

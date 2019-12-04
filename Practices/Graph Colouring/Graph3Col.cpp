@@ -4,7 +4,7 @@
     for practice 3
 */
 
-#include "adjList.hpp"
+#include "Headers.hpp"
 
 int main(int argc, char const *argv[])
 {
@@ -52,7 +52,7 @@ void createAdjMatrix()
 
 void ThreeColRed()
 {
-    ofstream dimacs{"reduction.cnf", ofstream::out};
+    ofstream dimacs{"reduction3.cnf", ofstream::out};
     string str{"c 3 colouring graph reduction\n"};
     
     dimacs << str; //.write(str.c_str(), str.length());
@@ -63,27 +63,29 @@ void ThreeColRed()
 
     for(int i = 0; i != graphNodes; ++i)
     {
-        generateClauses(i, dimacs);
+        generateClauses3(i, dimacs);
     }
 
     dimacs.close();
 }
 
-void generateClauses(int node, ofstream& dimacs)
+void generateClauses3(int node, ofstream& dimacs)
 {
     // Own clauses of a node
     int clauseBegin{node*3};
     string str{to_string(clauseBegin+1)};
-    for(int i = clauseBegin + 2; i <= clauseBegin+colours; 
+    
+    for(int i = clauseBegin + 2; i <= clauseBegin+colours3; 
     ++i)
         str.append(" " + to_string(i));
     
     str.append(" 0\n");
     dimacs << str;
 
-    for(int i = clauseBegin+1; i <= clauseBegin+colours; ++i)
+    for(int i = clauseBegin+1; i <= clauseBegin + colours3; 
+    ++i)
     {
-        for(int j = i+1; j <= clauseBegin+colours; ++j)
+        for(int j = i+1; j <= clauseBegin+colours3; ++j)
         {
             str = to_string(-i);
             str.append(" " + to_string(-j) + " 0\n");
