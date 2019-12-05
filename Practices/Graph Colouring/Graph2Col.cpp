@@ -84,4 +84,12 @@ void generateClauses2(int node, ofstream& dimacs)
     dimacs << str;
 
     // Adjacency Clauses
+    for(int i = node + 1; i < graphNodes; ++i)
+    {
+        if(adjMatrix[node][i])
+        {
+            int clauseBeginAdj{i*2};
+            
+        }
+    }
 }
