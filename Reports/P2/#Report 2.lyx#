@@ -1,0 +1,305 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Practice 2
+\end_layout
+
+\begin_layout Author
+Guillermo Girón García
+\end_layout
+
+\begin_layout Date
+15 - 11 - 2019
+\end_layout
+
+\begin_layout Abstract
+In this practice I’m going to create an algorithm for the Steiner Tree Problem.
+ This problem consists of a graph with n total nodes, out of which m are
+ optional to construct a generator tree.
+ I will study how long it takes depending on the number of optional nodes.
+\end_layout
+
+\begin_layout Section
+Methodology
+\end_layout
+
+\begin_layout Standard
+Before we get into the main function, we need a few assistants: 
+\end_layout
+
+\begin_layout Itemize
+Graph class
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+I used a class to represent graphs.
+ This class uses a vector of vectors to represent the cost matrix, giving
+ access to said matrix.
+ It also provides the costeTotal function to quickly calculate the total
+ cost of the graph, as well as general features like the movement, copy
+ and assignment operatos.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Apo class
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+This is a generic class used to store elements in a partially ordered tree.
+ It functions like a heap with preference: it gives access to the element
+ at the top, which always will be the highest valued element.
+ In our case, it will be used by prim’s algorithm to store edges, and the
+ smallest cost edge will always be at the top.
+ Its functions to add and remove an element are of order O(log a), ‘a’ being
+ the number of elements.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Prim function
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+It implements Prim’s algorithm, returning the given graph’s smallest generator
+ tree.
+ Its order is O(a*log n), ‘a’ being the number of edges and ‘n’ the number
+ of vertices.
+ In the worst case, the graph will be complete, so the number of edges will
+ be a = n*(n-1)/2, so the order will be O(n^2*logn).
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Submatrix function
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+This function returns a subgraph of a given graph.
+ Said subgraph’s vertices will be the ones pointed by a vector of indexes.
+ Its order is O(m), ‘m’ being the number of vertices of the final subgraph.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Binary number class
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+I used a class to represent binary numbers.
+ Said number is initialized at zero with a given number of digits.
+ It gives access to every digit as well as a function to increment the binary
+ number by one, whose time complexity is O(n) where ‘n’ is the number of
+ digits.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+
+\shape italic
+Note: The apo and graph classes, as well as prim’s algorithm have been taken
+ and adapted from EDNL’ sources.
+\end_layout
+
+\begin_layout Standard
+With all of this said, it is time to get into the main function: the Steiner
+ function (called Treeparse in the cpp file).
+\end_layout
+
+\begin_layout Standard
+This function receives the given graph and an integer NBase.
+ Said integer says how many of the graph’s vertices are mandatory, and it
+ is assumed that they are the first few vertices of the graph’s matrix.
+\end_layout
+
+\begin_layout Standard
+It starts simply by calculating the generator tree with every optional vertex.
+ Then, it creates a binary number with as many digits as optional vertices.
+ It iterates increasing thevalue of the binary number by one every iteration,
+ to go through every possible combination (except the “empty” combination,
+ which is calculated later separatedly).
+\end_layout
+
+\begin_layout Standard
+In each iteration it then creates a subgraph of the main graph, consisting
+ of the mandatory vertices plus the optional vertices indicated by the binary
+ number.
+ Then, it calls prim’s function with said subgraph to obtain its minimum
+ generator tree, and checks whether it is the best one at the moment, storing
+ it if true.
+ Lastly it returns the last tree it stored (which is the best one found).
+\end_layout
+
+\begin_layout Section
+Results and discussions
+\end_layout
+
+\begin_layout Standard
+Every time complexity discussion will always assume the worst case scenario.
+\end_layout
+
+\begin_layout Standard
+The Steiner function iterates through every possible combination of optional
+ elements, meaning that its biggest loop belongs to the order of O(2^m),
+ where ‘m’ is the number of optional vertices.
+\end_layout
+
+\begin_layout Standard
+However, in every iteration of this loop, the biggest operation is the call
+ to prim’s function with a subgraph of order O(k^2*logk), ‘k’ being the
+ number of vertices of the subgraph in each iteration.
+ K will start equal to NBase, increasing every few iterations all the way
+ up to n.
+ To simplify calculations, I will assume k to be equal to n in every iteration.
+\end_layout
+
+\begin_layout Standard
+Lastly, the time complexity of the Steiner function would be:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $O=2^{m}*n^{2}*log(n)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It belongs to the exponential order, which is not considered efficient.
+ Figure 1 showcases the huge growth in time that the algorithm gets as the
+ number of vertices increase.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /home/guillermogirongarcia/Programación/CC/Prácticas Teo/Data graph.png
+	lyxscale 35
+	scale 60
+	rotateOrigin center
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size small
+Figure 1: Growth of time (seconds) taken by the Steiner algorithm as the
+ number of optional vertices increase.
+ For this example, the total graph always has 30 vertices (The results of
+ the figure were calculated by the test.cpp file)
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+We observe that, in fact, the Steiner Tree Problem is largely inefficient,
+ and even for relatively small quantities of twenty to thirty optional vertices
+ the execution time increases immensely.
+ Albeit the actual algorithm of Steiner is inefficient, everything else
+ from Prim’s algorithm to the copy operation bewteen graphs is almost as
+ efficiently implemented as it can possibly be within the known standards.
+ This results in the total number vertices not playing a big role in the
+ algorithm’s total time, as it’s the amount of optional vertices which causes
+ the large amounts of combinations to check and is responsible of the exponentia
+l growth.
+\end_layout
+
+\begin_layout Section
+Reference
+\end_layout
+
+\begin_layout Itemize
+EDNL material, theory and sources extracted from Campus Virtual.
+\end_layout
+
+\end_body
+\end_document

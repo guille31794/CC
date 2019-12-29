@@ -288,15 +288,15 @@ void generateTree()
     //Used to generate combinations
     Binario comb{n};
 
-    while(comb.NOnes < 25)
-    {
+    //while(comb.NOnes < 25)
+    //{
         vector<vector<unsigned>> subM{subMComb(cm, comb)};
         //showComb(comb);
         vector<pair<unsigned, unsigned>> S{Prim(subM, dim)};
         //showPairs(S);
         d = min(distance(S), d);
         comb.inc();
-    }
+    //}
     
     cout << "Minimun distance is: " << d << endl;
 }

@@ -1,0 +1,486 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Practice 3 report
+\end_layout
+
+\begin_layout Author
+Guillermo Girón García
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Index
+\end_layout
+
+\begin_layout Subsection*
+Abstract
+\end_layout
+
+\begin_layout Subsection*
+Introduction
+\end_layout
+
+\begin_layout Subsection*
+Methodology
+\end_layout
+
+\begin_layout Subsection*
+Results and discussions
+\end_layout
+
+\begin_layout Subsection*
+Conclusions
+\end_layout
+
+\begin_layout Subsection*
+References
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part*
+Abstract
+\end_layout
+
+\begin_layout Standard
+This pages are dedicated to the resolution of a Petersen graph colouring,
+ reducing it to a SAT problem, for two colours, being impossible to have
+ a solution and for three and four colours, which both have solutions.
+\end_layout
+
+\begin_layout Part*
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this practice we're going to analyze the possibilities to solve a Petersen
+ graph colouring in several number of colours through a reduction made to
+ SAT problem, introducing for this purpose, the dimacs sintax and picosat
+ software.
+\end_layout
+
+\begin_layout Standard
+We're going to learn too about Petersen graphs properties, its chromatic
+ number, its clique number, and some differente colorabilty possibilities.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Date
+\begin_inset Graphics
+	filename /home/guillermogirongarcia/Programación/CC/Reports/Petersen_graph_3-coloring.svg.png
+	lyxscale 30
+	scale 12
+	rotateOrigin center
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Figure 1: 3-coloured Petersen graph
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Part*
+Methodology
+\end_layout
+
+\begin_layout Standard
+The only physical equipment needed for this experiments, it's a computer
+ with some Linux distribution installed or a Virtual machine to use the
+ requested software: PicoSat.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+We'll proceed, learning about dimacs and its semantics.
+ In this pseudo language, we compute a problem decomposed in clauses.
+ It's similar to a rule-based system.
+\end_layout
+
+\begin_layout Standard
+The first line starts with letter 'c' and represents the comment line, to
+ clarify what the algorithm does.
+\end_layout
+
+\begin_layout Standard
+The second one, starts with letter 'p', from problem, followed by the type
+ of problem, in our case 'cnf', then the number of variables we'll use and
+ the number of clauses we'll have in our problem.
+ Both of them, we'll depend on wether we're computing 3 or 2 graph colouring.
+\end_layout
+
+\begin_layout Standard
+In dimacs, every clause it's formed by variables separated by a blank space,
+ and every clause it's finished in a 0.
+ Every variable it's an integer number, that can be negative if the variable
+ is negated.
+\end_layout
+
+\begin_layout Standard
+This variables, represents the possibles colour adopted for every node in
+ our graph.
+ Figure 2 shows an example.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename /home/guillermogirongarcia/Imágenes/Captura de pantalla de 2019-12-06 20-06-33.png
+	lyxscale 35
+	rotateOrigin center
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Figure 2: Dimacs example extracted from 2 colour reduction
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+We create two c++ programs that computes the translation from a graph to
+ dimacs, given it's adjacency list in a file called list.txt.
+ One of them will compute 3 graph colouring and another one 2 graph colouring.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Then, this dimacs translation are passed through another software called
+ PicoSat, that gives the answer on wether the problem have a valid solution
+ or not.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+From now on, we'll call 'k', to the number of colours during our reduction,
+ and 'n', to the number of vertex in our graph.
+ So our number of variables for reduction will be k * n.
+\end_layout
+
+\begin_layout Standard
+Let's focus now on how to build clauses for each vertex.
+\end_layout
+
+\begin_layout Itemize
+There will be a clause for node, forcing it to take a colour.
+ Taking as example 3 graph colouring, we can have: 
+\begin_inset Formula $R_{i}vB_{i}vG_{i}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+For every node, there will be a number of clauses to prevent it from having
+ more than one colour.
+ This means we need all the 2-permutations from the k colours.
+ Ex: 
+\begin_inset Formula $(\neg R_{i}\,v\,\neg B_{i})\,and\,(\neg R_{i}\,v\,\neg G_{i})\,and\,(\neg B_{i}\,v\,\neg G_{i})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The amount of 2-permutations for k colours is an arithmetic progression
+ going from 1 to k-1, with a difference of 1.
+ It can be computed by the next formula:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{k*(k-1)}{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So, for now, we have one, plus the formula above clauses, for every node.
+\end_layout
+
+\begin_layout Itemize
+Lastly, we have to set the constraints that will prevent two adjacent nodes
+ from having the same color.
+ To do that, we need to run through every node’s adjacency list and add
+ k clauses per every adjacent node.
+ Ex: 
+\begin_inset Formula $(\neg R_{i}v\neg R_{j})\,and\,(\neg B_{i}v\neg B_{j})\,and\,(\neg G_{i}v\neg G_{j})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since adjacency lists can have any number of vertices up to n, there is
+ no formula to calculate the number of clauses needed.
+ So we have to add up every vertex’s adjacency list’s size times k.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+However, the graphs we are working with are undirected graphs, which means
+ that every adjacency is listed twice, so we have to divide the previous
+ amount of clauses by two.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+In order to avoid constructing duplicated clauses, I simply add a restriction
+ when reading a vertex’ adjacency list: the clause is only written if the
+ “origin” vertex (the one whose list we are reading) is lesser than the
+ “destiny” vertex (the one inside the list).
+ This way, we would write a clause if we find the vertex 7 in 2’s list,
+ but not if we find the vertex 2 in 7’s list, for example.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+With that said, the total amount of clauses would follow the formula:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+n+n*\frac{k*(k-1)}{2}+edges*k
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where, of course, we don’t have the number of edges, and instead have to
+ check the adjacency lists.
+\end_layout
+
+\begin_layout Section*
+Results and discussions
+\end_layout
+
+\begin_layout Standard
+After testing the programs, one can easily see that the Petersen graph is
+ unsolvable with two colors, as both the graphColor function and the PICOSAT
+ application fail to find a solution.
+ The graph is however colorable with three colors, with 120 different possible
+ solutions, and 12960 solutions with 4 colors.
+ With this, we can say that the chromatic number of the Petersen graph is
+ three.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Two of the possible 3-color solutions would be the following (assuming that
+ 1, 2 and 3 are different colors, and the vertices are called in order from
+ 1 to 10):
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+1 2 1 2 3 2 1 3 3 2
+\end_layout
+
+\begin_layout Standard
+2 3 2 3 1 3 2 1 1 3
+\end_layout
+
+\begin_layout Section*
+Conclusions
+\end_layout
+
+\begin_layout Standard
+First of all, we have successfully made a Karp-reduction from graph coloring
+ to SAT problems, as the reduction has no instructions that take longer
+ than polynomial time, and the SAT-solving algorithm only has to be called
+ once to obtain an answer.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+We have also proved that the Petersen Graph’s chromatic number is three,
+ as it is not solvable with two colors.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+If the graph is three-colorable, that means that if we pick any four vertices
+ of the graph, at least one color will be repeated.
+ If that is the case, then it is not possible for said four vertices to
+ form a clique, as they would not satisfy the graph coloring problem.
+ As such, it is impossible for the Petersen graph to have a clique of size
+ four.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+In fact, the maximum possible clique that any graph can have is its chromatic
+ number, if we apply that same logic to any other case.
+ This does not mean the clique will be of that size, only that it can’t
+ be bigger.
+ In Petersen’s case, its maximum clique is of size two, as it doesn’t form
+ any triangles.
+\end_layout
+
+\end_body
+\end_document

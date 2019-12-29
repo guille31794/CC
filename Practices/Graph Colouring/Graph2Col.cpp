@@ -10,7 +10,7 @@ int main(int argc, char const *argv[])
 {
     loadList();
     createAdjMatrix();
-    //TwoColRed(); 
+    TwoColRed(); 
 
     return 0;
 }
@@ -57,7 +57,7 @@ void TwoColRed()
     
     dimacs << str; //.write(str.c_str(), str.length());
 
-    str = "p cnf 30 85\n";
+    str = "p cnf 20 60\n";
 
     dimacs << str;
 
@@ -72,15 +72,15 @@ void TwoColRed()
 void generateClauses2(int node, ofstream& dimacs)
 {
     //Own Clauses of a node
-    int clauseBegin{node*2};
-    string str{to_string(clauseBegin+1) 
-    + " " + to_string(clauseBegin+2) + " 0\n"};
+    int clauseBegin{(node*2)+1};
+    string str{to_string(clauseBegin) 
+    + " " + to_string(clauseBegin+1) + " 0\n"};
+    dimacs << str;
+
+    str = to_string(-(clauseBegin)) + " 0\n";
     dimacs << str;
 
     str = to_string(-(clauseBegin+1)) + " 0\n";
-    dimacs << str;
-
-    str = to_string(-(clauseBegin+2)) + " 0\n";
     dimacs << str;
 
     // Adjacency Clauses
@@ -88,8 +88,14 @@ void generateClauses2(int node, ofstream& dimacs)
     {
         if(adjMatrix[node][i])
         {
-            int clauseBeginAdj{i*2};
-            
+            int clauseBeginAdj{(i*2)+1};
+            str = to_string(-(clauseBegin)) + " " +
+            to_string(-(clauseBeginAdj)) + " 0\n";
+            dimacs << str;
+
+            str = to_string(-(clauseBegin+1)) + " " +
+            to_string(-(clauseBeginAdj+1)) + " 0\n";
+            dimacs << str;
         }
     }
 }

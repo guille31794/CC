@@ -99,7 +99,7 @@ void generateClauses3(int node, ofstream& dimacs)
         if(adjMatrix[node][i])
         {
             int clauseBeginAdj{i*3};
-            for(int j = 1; j <= colours; ++j)
+            for(int j = 1; j <= colours3; ++j)
             {
                 str = to_string(-(clauseBegin+j)) + " " + 
                 to_string(-(clauseBeginAdj+j)) + " 0\n";

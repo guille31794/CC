@@ -1,0 +1,468 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Practice 5
+\end_layout
+
+\begin_layout Author
+Guillermo Girón García
+\end_layout
+
+\begin_layout Abstract
+Attempt to suboptimally solve the Travelling Salesman Problem through the
+ use of the Ant Colony Optimisation algorithm, and some of its extensions:
+ Elitist Ant System and MAX-MIN, stablishing and testing its parameters.
+\end_layout
+
+\begin_layout Abstract
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Through the course of this paper we going to study the resolution of the
+ Traveling Salesman Problem (TSP to shorten) using an Ant Colony Optimisation
+ (ACO from now on) approach.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+The reason behind choosing ACO is that approach appears to find good results
+ faster than other algorithms, because the ants are fittingly searching
+ an optimal path with stochastic yet visibly intelligent behaviour, giving
+ more importance to an edge that has a better heuristic and pheromone value,
+ whereas a genetic algorithm approach would be much more randomised since
+ it first buidls random solutions and then chooses and randomly modifies
+ the best ones.
+ Besides, a genetic algorithm is generally more time consuming, both in
+ its bigger computation time an the more parameters that need to be adjusted.
+\end_layout
+
+\begin_layout Section
+Methodology
+\end_layout
+
+\begin_layout Standard
+All the code can be checked in the antColony.cpp file, which takes care of
+ reading the .tsp and .opt.tour files needed concurrently in different threads
+ and finding a result for it.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+First of all, we need a structure to store the information about the cities.
+ In this case, a vector of <city> types, where a city simply contains a
+ cartesian pair of float coordinates x and y.
+ Through the readfile function, a file given in the parameter string is
+ read and all of its cities stored in a vector of that caliber.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Next, we build a square matrix which contains the distnaces between every
+ pair of cities, via the getDistances function, which receives the vector
+ of cities and returns the matrix of distances, which we will call 'map'
+ from now on.
+ This matrix is symetrical, and its main diagonal is never accessed.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Afterwards, we hace to set all the parameters for the ACO algorithm:
+\end_layout
+
+\begin_layout Itemize
+Randomseed: A seed to set randomisation.
+\end_layout
+
+\begin_layout Itemize
+Max_it: The amount of iterations the algorithm will do before stopping.
+\end_layout
+
+\begin_layout Itemize
+Num_ants: The amount of ants the colony will simulate.
+\end_layout
+
+\begin_layout Itemize
+Decay_factor: The factor to determine the speed of the pheromones evaporation.
+\end_layout
+
+\begin_layout Itemize
+Alpha: Factor to determine the importance of the heuristic value of the
+ paths for an ant to choose.
+\end_layout
+
+\begin_layout Itemize
+Beta: Factor to determine the importance of the pheromone value of the paths
+ for an ant to choose.
+\end_layout
+
+\begin_layout Itemize
+C_phero: Amount of pheromones that each ant will leave in its path.
+\end_layout
+
+\begin_layout Itemize
+C_elite: Amount of extra pheromones that elite ants will leave in its paths,
+ in the elitist expansion.
+\end_layout
+
+\begin_layout Itemize
+doExpansion: Logical flag to determine whether or not the algorithm must
+ use the elitist expansion.
+\end_layout
+
+\begin_layout Standard
+With all previous steps done, it is time to start with the main algorithm:
+ the ACO function, receiving all the parameters above plus the vector of
+ cities and the map.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+The ACO implementation follows the standard algorithm: find paths, put pheromone
+s, evaporate pheromones, repeat; plus the elitist expansion of extra pheromones
+ for the current best path.
+ The heuristic factor is determined as follows: MAX_DIST - current_dist,
+ where MAX_DIST is the maximum distance of the entire map, and current_dist
+ the distance of the given edge.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+However, there is one important factor that needs to be mentioned.
+ When an ant is forming a path, it tries to find the smallest circuit from
+ the first city to the last one, but it doesn't take into account the returning
+ trip required to close the cycle.
+ This is because each ant takes its current city and selects the next one
+ based on a roulette selection with the heuristic and pheromone values of
+ all possible edges from said current city.
+ In order to make up for this loss of information, every ant is assigned
+ to one specific starting city, so that every city has an equal amount of
+ ants staring from it (or at least as similar as possible if the divission
+ isn't exact) and the colony as a whole can determine a closed cycle.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Lastly, after the algorithm has finished, the best ant of the colony is
+ returned.
+ Its path cost is then processed and showed, along with the theoretical
+ optimal of this instance.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+In this ocassion we are going to use three different implementations that
+ are:
+\end_layout
+
+\begin_layout Enumerate
+berlin52.
+\end_layout
+
+\begin_layout Enumerate
+kroA100.
+\end_layout
+
+\begin_layout Enumerate
+eil51.
+\end_layout
+
+\begin_layout Enumerate
+pr2392.
+\end_layout
+
+\begin_layout Standard
+We set most of the parameters to one except decay that is set to 0.6 and
+ we will start for the first one of the files.
+\end_layout
+
+\begin_layout Standard
+Under these circumstances, the behaviour of the algorithm is certainly intrerest
+ing.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+The optimal solution of the berlin sample is about 7.000, and the algorithm
+ only finds solutions of about 21.000 with the 
+\begin_inset Quotes eld
+\end_inset
+
+default
+\begin_inset Quotes erd
+\end_inset
+
+ values.
+ Changing the amount of iterations doesn't have an impact, as the solution
+ barely varies from 50 to 50.000 iterations except for the computation time,
+ that can become extremely long.
+\end_layout
+
+\begin_layout Standard
+Also, there is a very small difference between using or not the elitist
+ expansion, as well as varying the pheromone coefficients, even with drastic
+ amounts like tens of thousans.
+ Assigning more ants to each city doesn't seem to factor in the results
+ either.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+However, the values of alpha and beta seems to be a key factor in the performanc
+e.
+ A high beta value of about ten, along with various ants per city, a very
+ high pheromone coefficient (at least at the same scale as a path cost,
+ 10.000) and a high elite coefficient as well, the algorithm is capable of
+ finding better solutions (~12.000) in around 1.000 iterations.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+On the other hand, leaving all the previous values at default, and instead
+ increasing alpha up to 30, returns better results much quicker (~9.000 in
+ under 50 iterations).
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Lastly, combining both parametrizations, the algorithm is able to find slightly
+ better solutions (8500-8700), again ir around 1.000 iterations.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+For kroA100 using the same parameters we obtain a very good optimization
+ of the solution in only 100 iterations.
+ Despite the low iteration number, it still takes a lot of time to be computed
+ in comparison with the others that are computed almost instantly.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+In eil5, again experimenting with the same parameters, we obtain good results
+ aswell, with an optimization of around a 15%.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Lastly, at pr2392 sample, it becomes impossible to compute a solution with
+ this algorithm due every time we try to execute it, it throws a memory
+ problem, forcing me to through it out of the main program to avoid execution
+ errors.
+\end_layout
+
+\begin_layout Section
+Conclussions
+\end_layout
+
+\begin_layout Standard
+Reached this point we can say there is an interesting difference in the
+ two ways that we can adjust the parameters of the algorithm.
+ On one hand, we can give a lot of emphasis to the concept of the ACO approach,
+ giving high values to all the parameters regarding pheromone spreads, number
+ of ants and pheromone importance, and eventually it is able to improve
+ the solutions.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+On the other hand, we can treat the algorithm like a series of individual
+ local searches, giving most of the importance to the heuristic values,
+ resulting in good solutions with little iterations, that do not improve
+ overtime.
+\end_layout
+
+\begin_layout Standard
+\SpecialChar allowbreak
+
+\end_layout
+
+\begin_layout Standard
+Finding a good balance between both approaches is able to yield better solutions
+ than either of them alone, but of course with larger computation time than
+ a local search, and the solutions found might be even better than the ones
+ shown here if given enough number of iterations, but taking in acount that
+ time will grows much faster than optimization, and that almost the same
+ patter and values, works well for the three analyzed samples.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+Ant Colony Optimization for hackers, by Lee Jacobson.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-2"
+
+\end_inset
+
+Solving the Travelling Salesman Problem using the Ant Colony Optimization,
+ by Ivan Brezina Jr.
+ and Zuzana Cickova.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-3"
+
+\end_inset
+
+Ant Colony Optimization - Optimal number of ants, by Christoffer Lundell
+ Johansson and Lars Pettersson.
+\end_layout
+
+\end_body
+\end_document
